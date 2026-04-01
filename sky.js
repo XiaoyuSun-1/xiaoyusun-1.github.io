@@ -32,11 +32,39 @@ if (skyCanvas) {
   }
 
   function rgba(r, g, b, a = 1) {
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
+    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
   }
 
   function random(min, max) {
     return Math.random() * (max - min) + min;
+  }
+
+  function mixColor(a, b, t) {
+    return [
+      lerp(a[0], b[0], t),
+      lerp(a[1], b[1], t),
+      lerp(a[2], b[2], t),
+    ];
+  }
+
+  function rgbStr(c, a = 1) {
+    return `rgba(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])}, ${a})`;
+  }
+
+  function colorLerp(stops, x) {
+    if (x <= stops[0][0]) return stops[0][1];
+    if (x >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
+
+    for (let i = 0; i < stops.length - 1; i++) {
+      const [x0, c0] = stops[i];
+      const [x1, c1] = stops[i + 1];
+      if (x >= x0 && x <= x1) {
+        const t = (x - x0) / (x1 - x0);
+        return mixColor(c0, c1, t);
+      }
+    }
+
+    return stops[stops.length - 1][1];
   }
 
   function resizeSky() {
@@ -90,9 +118,9 @@ if (skyCanvas) {
 
   function buildClouds() {
     cloudLayers.length = 0;
-    cloudLayers.push(createCloud(11, 0.64, 140, 240, 0.05, 0.12, 0.26));
-    cloudLayers.push(createCloud(10, 0.75, 180, 300, 0.09, 0.18, 0.34));
-    cloudLayers.push(createCloud(9, 0.87, 240, 390, 0.14, 0.24, 0.42));
+    cloudLayers.push(createCloud(11, 0.64, 140, 240, 0.05, 0.12, 0.24));
+    cloudLayers.push(createCloud(10, 0.75, 180, 300, 0.09, 0.18, 0.32));
+    cloudLayers.push(createCloud(9, 0.87, 240, 390, 0.14, 0.24, 0.40));
   }
 
   function dayOfYear(date) {
@@ -128,7 +156,7 @@ if (skyCanvas) {
     const timeOffset = eqtime + 4 * lon - 60 * timezone;
     const trueSolarMinutes = hours * 60 + timeOffset;
     const hourAngleDeg = trueSolarMinutes / 4 - 180;
-    const hourAngle = hourAngleDeg * Math.PI / 180;
+    const hourAngle = hourAngleDeg * rad;
     const latRad = lat * rad;
 
     const cosZenith =
@@ -167,15 +195,26 @@ if (skyCanvas) {
 
   function getMoon(date) {
     const phase = moonPhase(date);
-    const shifted = new Date(date.getTime() + (12.85 + phase * 1.2) * 3600000);
-    const pos = observer.usingGeo && observer.lat != null && observer.lon != null
-      ? solarPosition(shifted, observer.lat, observer.lon)
-      : fallbackSolarPosition(shifted);
+    const lunarAgeDays = phase * 29.530588853;
+
+    // New moon rises near sunrise, first quarter near noon,
+    // full moon near sunset, last quarter near midnight.
+    const riseDelayHours = lunarAgeDays * 24 / 29.530588853;
+    const shifted = new Date(date.getTime() - riseDelayHours * 3600000);
+
+    const pos =
+      observer.usingGeo && observer.lat != null && observer.lon != null
+        ? solarPosition(shifted, observer.lat, observer.lon)
+        : fallbackSolarPosition(shifted);
+
+    // Add a small oscillation so the moon path feels less identical to the sun
+    const seasonalTilt = Math.sin((dayOfYear(date) / 365) * Math.PI * 2 + phase * Math.PI * 2) * 8;
 
     return {
-      altitude: pos.altitude,
+      altitude: pos.altitude + seasonalTilt,
       hourAngleDeg: pos.hourAngleDeg,
       phase,
+      lunarAgeDays,
     };
   }
 
@@ -189,89 +228,91 @@ if (skyCanvas) {
 
   function drawSky(sunAlt) {
     const horizonY = height * HORIZON_RATIO;
-    const day = smoothstep(-6, 18, sunAlt);
-    const dawnDusk = Math.max(smoothstep(-12, 8, sunAlt) - smoothstep(8, 24, sunAlt), 0);
-    const blueHour = Math.max(smoothstep(-10, -2, sunAlt) - smoothstep(-2, 6, sunAlt), 0);
-    const night = 1 - smoothstep(-10, 6, sunAlt);
-
     ctx.clearRect(0, 0, width, height);
 
-    const nightGrad = ctx.createLinearGradient(0, 0, 0, height);
-    nightGrad.addColorStop(0, rgba(4, 10, 28, 1));
-    nightGrad.addColorStop(0.5, rgba(10, 22, 55, 1));
-    nightGrad.addColorStop(1, rgba(20, 26, 48, 1));
-    ctx.fillStyle = nightGrad;
+    const topStops = [
+      [-18, [4, 8, 20]],
+      [-12, [10, 20, 45]],
+      [-7, [28, 52, 98]],
+      [-2, [72, 110, 170]],
+      [2, [140, 170, 210]],
+      [10, [110, 170, 230]],
+      [35, [52, 125, 220]],
+      [60, [24, 98, 205]],
+    ];
+
+    const midStops = [
+      [-18, [8, 14, 30]],
+      [-12, [20, 36, 75]],
+      [-7, [60, 92, 145]],
+      [-2, [120, 146, 194]],
+      [2, [255, 170, 120]],
+      [10, [155, 198, 235]],
+      [35, [112, 184, 245]],
+      [60, [90, 170, 240]],
+    ];
+
+    const horizonStops = [
+      [-18, [18, 24, 42]],
+      [-12, [34, 42, 74]],
+      [-7, [88, 92, 130]],
+      [-2, [255, 144, 98]],
+      [2, [255, 184, 118]],
+      [10, [225, 218, 205]],
+      [35, [208, 228, 245]],
+      [60, [196, 222, 245]],
+    ];
+
+    const zenith = colorLerp(topStops, sunAlt);
+    const mid = colorLerp(midStops, sunAlt);
+    const horizon = colorLerp(horizonStops, sunAlt);
+
+    const grad = ctx.createLinearGradient(0, 0, 0, height);
+    grad.addColorStop(0, rgbStr(zenith, 1));
+    grad.addColorStop(0.48, rgbStr(mid, 1));
+    grad.addColorStop(0.82, rgbStr(horizon, 1));
+    grad.addColorStop(1, rgbStr(horizon, 1));
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
 
-    if (day > 0) {
-      ctx.save();
-      ctx.globalAlpha = day;
-      const dayGrad = ctx.createLinearGradient(0, 0, 0, height);
-      dayGrad.addColorStop(0, rgba(43, 112, 212, 1));
-      dayGrad.addColorStop(0.38, rgba(102, 171, 244, 1));
-      dayGrad.addColorStop(0.72, rgba(176, 218, 255, 1));
-      dayGrad.addColorStop(1, rgba(236, 243, 255, 1));
-      ctx.fillStyle = dayGrad;
+    const twilightStrength = Math.max(0, 1 - Math.abs(sunAlt + 1) / 10);
+    if (twilightStrength > 0.01) {
+      const warmGlow = ctx.createRadialGradient(
+        width * 0.5,
+        horizonY + 10,
+        10,
+        width * 0.5,
+        horizonY + 10,
+        width * 0.75
+      );
+      warmGlow.addColorStop(0, rgba(255, 190, 120, 0.28 * twilightStrength));
+      warmGlow.addColorStop(0.28, rgba(255, 140, 90, 0.22 * twilightStrength));
+      warmGlow.addColorStop(0.58, rgba(210, 120, 170, 0.14 * twilightStrength));
+      warmGlow.addColorStop(1, rgba(0, 0, 0, 0));
+      ctx.fillStyle = warmGlow;
       ctx.fillRect(0, 0, width, height);
-      ctx.restore();
     }
 
-    if (blueHour > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = blueHour * 0.9;
-      const blueGrad = ctx.createLinearGradient(0, 0, 0, height);
-      blueGrad.addColorStop(0, rgba(18, 44, 100, 0.78));
-      blueGrad.addColorStop(0.54, rgba(54, 95, 168, 0.54));
-      blueGrad.addColorStop(1, rgba(130, 150, 190, 0.18));
-      ctx.fillStyle = blueGrad;
+    const noonGlow = smoothstep(18, 55, sunAlt);
+    if (noonGlow > 0.01) {
+      const highLight = ctx.createRadialGradient(
+        width * 0.5,
+        height * 0.12,
+        0,
+        width * 0.5,
+        height * 0.12,
+        width * 0.65
+      );
+      highLight.addColorStop(0, rgba(255, 255, 255, 0.08 * noonGlow));
+      highLight.addColorStop(1, rgba(255, 255, 255, 0));
+      ctx.fillStyle = highLight;
       ctx.fillRect(0, 0, width, height);
-      ctx.restore();
-    }
-
-    if (dawnDusk > 0.01) {
-      ctx.save();
-      ctx.globalAlpha = dawnDusk;
-
-      const warmBand = ctx.createLinearGradient(0, horizonY - 120, 0, height);
-      warmBand.addColorStop(0, rgba(255, 193, 120, 0));
-      warmBand.addColorStop(0.3, rgba(255, 168, 92, 0.36));
-      warmBand.addColorStop(0.58, rgba(255, 128, 86, 0.52));
-      warmBand.addColorStop(0.84, rgba(196, 104, 160, 0.28));
-      warmBand.addColorStop(1, rgba(0, 0, 0, 0));
-      ctx.fillStyle = warmBand;
-      ctx.fillRect(0, horizonY - 140, width, height - horizonY + 140);
-
-      const upperWarmth = ctx.createRadialGradient(width * 0.5, horizonY - 28, 20, width * 0.5, horizonY - 28, width * 0.68);
-      upperWarmth.addColorStop(0, rgba(255, 206, 140, 0.42));
-      upperWarmth.addColorStop(0.28, rgba(255, 165, 106, 0.26));
-      upperWarmth.addColorStop(0.54, rgba(201, 118, 170, 0.14));
-      upperWarmth.addColorStop(1, rgba(0, 0, 0, 0));
-      ctx.fillStyle = upperWarmth;
-      ctx.fillRect(0, 0, width, height);
-      ctx.restore();
-    }
-
-    if (night > 0.12) {
-      ctx.save();
-      ctx.globalAlpha = night * 0.44;
-      const glowA = ctx.createRadialGradient(width * 0.16, height * 0.16, 0, width * 0.16, height * 0.16, width * 0.34);
-      glowA.addColorStop(0, rgba(72, 92, 180, 0.28));
-      glowA.addColorStop(1, rgba(72, 92, 180, 0));
-      ctx.fillStyle = glowA;
-      ctx.fillRect(0, 0, width, height);
-
-      const glowB = ctx.createRadialGradient(width * 0.84, height * 0.14, 0, width * 0.84, height * 0.14, width * 0.28);
-      glowB.addColorStop(0, rgba(120, 88, 180, 0.2));
-      glowB.addColorStop(1, rgba(120, 88, 180, 0));
-      ctx.fillStyle = glowB;
-      ctx.fillRect(0, 0, width, height);
-      ctx.restore();
     }
   }
 
   function drawStars(t, sunAlt) {
     const night = 1 - smoothstep(-8, 8, sunAlt);
-    if (night < 0.06) return;
+    if (night < 0.05) return;
 
     ctx.save();
     ctx.globalCompositeOperation = "screen";
@@ -287,6 +328,7 @@ if (skyCanvas) {
 
       const twinkle = 0.55 + 0.45 * Math.sin(t * 0.0012 * star.twinkle + star.x * 0.012 + star.y * 0.008);
       const alpha = clamp(star.baseAlpha * twinkle * night * 1.35, 0, 1);
+
       ctx.beginPath();
       ctx.fillStyle = rgba(255, 255, 255, alpha);
       ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
@@ -298,57 +340,80 @@ if (skyCanvas) {
 
   function drawSun(pos, sunAlt) {
     if (sunAlt < -8) return;
+
     const { x, y } = bodyToXY(pos);
     const r = lerp(28, 44, smoothstep(-6, 30, sunAlt));
 
     ctx.save();
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.6);
-    glow.addColorStop(0, rgba(255, 248, 224, 0.95));
-    glow.addColorStop(0.16, rgba(255, 224, 158, 0.58));
-    glow.addColorStop(0.46, rgba(255, 182, 98, 0.22));
+
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.8);
+    glow.addColorStop(0, rgba(255, 248, 224, 0.96));
+    glow.addColorStop(0.14, rgba(255, 225, 160, 0.62));
+    glow.addColorStop(0.42, rgba(255, 182, 98, 0.22));
     glow.addColorStop(1, rgba(255, 182, 98, 0));
     ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.arc(x, y, r * 3.6, 0, Math.PI * 2);
+    ctx.arc(x, y, r * 3.8, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.fillStyle = rgba(255, 239, 184, 0.98);
+    ctx.fillStyle = rgba(255, 240, 188, 0.99);
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
+
     ctx.restore();
   }
 
   function drawMoon(pos, sunAlt) {
-    const night = 1 - smoothstep(-6, 8, sunAlt);
-    if (night < 0.16) return;
+    const night = 1 - smoothstep(-4, 10, sunAlt);
+    if (night < 0.08) return;
 
     const { x, y } = bodyToXY(pos);
-    const r = 26;
+    const r = 24;
     const phase = pos.phase;
     const illum = 0.5 * (1 - Math.cos(2 * Math.PI * phase));
     const waxing = phase < 0.5;
-    const shadowShift = (1 - illum) * r * 2 * (waxing ? -1 : 1);
+
+    const altitudeTint = smoothstep(-5, 30, pos.altitude);
+    const moonBase = [
+      lerp(255, 242, 1 - altitudeTint),
+      lerp(236, 245, altitudeTint),
+      lerp(210, 252, altitudeTint),
+    ];
 
     ctx.save();
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
-    glow.addColorStop(0, rgba(255, 255, 255, 0.28 * night));
+
+    const glowAlpha = (0.10 + illum * 0.18) * night;
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.4);
+    glow.addColorStop(0, rgbStr(moonBase, glowAlpha));
     glow.addColorStop(1, rgba(255, 255, 255, 0));
     ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.arc(x, y, r * 3.2, 0, Math.PI * 2);
+    ctx.arc(x, y, r * 3.4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.fillStyle = rgba(242, 245, 250, 0.95 * night);
+    ctx.fillStyle = rgbStr(moonBase, 0.96 * night);
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.globalCompositeOperation = "source-atop";
     ctx.beginPath();
-    ctx.fillStyle = rgba(10, 18, 40, 0.92);
-    ctx.arc(x + shadowShift, y, r, 0, Math.PI * 2);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.clip();
+
+    const k = Math.cos(2 * Math.PI * phase);
+    const shadowOffset = k * r;
+
+    ctx.beginPath();
+    ctx.fillStyle = rgba(8, 14, 28, 0.92);
+    ctx.ellipse(x + shadowOffset, y, r, r, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = rgbStr([255, 252, 245], 0.08 * illum * night);
+    ctx.arc(x + (waxing ? -r * 0.18 : r * 0.18), y - r * 0.1, r * 0.72, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.restore();
   }
 
@@ -366,19 +431,24 @@ if (skyCanvas) {
   }
 
   function drawCloudPuff(cloud, layerIndex, sunAlt) {
-    const day = smoothstep(-6, 18, sunAlt);
-    const dusk = Math.max(0, 1 - Math.abs(sunAlt) / 16);
-    const night = 1 - smoothstep(-8, 10, sunAlt);
+    const day = smoothstep(-4, 20, sunAlt);
+    const dusk = Math.max(0, 1 - Math.abs(sunAlt) / 10);
+    const night = 1 - smoothstep(-6, 8, sunAlt);
 
-    const topR = 112 + day * 118 + dusk * 68;
-    const topG = 126 + day * 112 + dusk * 34;
-    const topB = 160 + day * 86 - dusk * 8;
+    const topR = 82 + day * 160 + dusk * 36;
+    const topG = 92 + day * 156 + dusk * 26;
+    const topB = 110 + day * 145 - dusk * 12;
 
-    const bottomR = 54 + day * 58 + dusk * 118;
-    const bottomG = 70 + day * 66 + dusk * 38;
-    const bottomB = 112 + day * 52 - dusk * 18 + night * 14;
+    const bottomR = 58 + day * 112 + dusk * 125;
+    const bottomG = 66 + day * 104 + dusk * 48;
+    const bottomB = 84 + day * 108 - dusk * 22 + night * 10;
 
-    const grad = ctx.createLinearGradient(cloud.x, cloud.y - cloud.size * 0.4, cloud.x, cloud.y + cloud.size * 0.4);
+    const grad = ctx.createLinearGradient(
+      cloud.x,
+      cloud.y - cloud.size * 0.4,
+      cloud.x,
+      cloud.y + cloud.size * 0.4
+    );
     grad.addColorStop(0, rgba(topR, topG, topB, cloud.alpha));
     grad.addColorStop(1, rgba(bottomR, bottomG, bottomB, cloud.alpha * 0.95));
     ctx.fillStyle = grad;
@@ -386,6 +456,7 @@ if (skyCanvas) {
     for (const puff of cloud.puffOffset) {
       const rx = cloud.size * puff.scale * 0.7;
       const ry = cloud.size * puff.scale * 0.36;
+
       ctx.beginPath();
       ctx.ellipse(
         cloud.x + puff.ox * cloud.size,
@@ -421,11 +492,13 @@ if (skyCanvas) {
 
     ctx.save();
     ctx.globalAlpha = haze * 0.42;
+
     const halo = ctx.createRadialGradient(x, y, 0, x, y, width * 0.34);
-    halo.addColorStop(0, rgba(255, 210, 140, 0.3));
+    halo.addColorStop(0, rgba(255, 210, 140, 0.30));
     halo.addColorStop(1, rgba(255, 210, 140, 0));
     ctx.fillStyle = halo;
     ctx.fillRect(0, 0, width, height);
+
     ctx.restore();
   }
 
