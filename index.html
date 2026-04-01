@@ -5,60 +5,406 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Xiaoyu Sun</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 760px;
-      margin: 60px auto;
-      padding: 0 20px;
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: white;
+      background: #050816;
+      overflow-x: hidden;
+    }
+
+    #bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      display: block;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at top, rgba(120, 160, 255, 0.10), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(180, 120, 255, 0.10), transparent 30%),
+        linear-gradient(to bottom, rgba(4, 8, 24, 0.15), rgba(3, 5, 18, 0.45));
+      pointer-events: none;
+    }
+
+    .container {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 72px 0 56px;
+    }
+
+    .hero-card,
+    .section-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .hero-card {
+      padding: 40px 32px;
+      margin-bottom: 24px;
+    }
+
+    .name {
+      font-size: clamp(2.4rem, 7vw, 4.8rem);
+      line-height: 1.02;
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .name-sub {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.82);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tagline {
+      margin-top: 20px;
+      font-size: 1.12rem;
       line-height: 1.7;
-      color: #222;
+      max-width: 700px;
+      color: rgba(255, 255, 255, 0.9);
     }
-    h1 {
-      margin-bottom: 8px;
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
     }
-    .subtitle {
-      color: #666;
-      margin-top: 0;
-      margin-bottom: 32px;
-    }
-    h2 {
-      margin-top: 32px;
-    }
-    a {
-      color: #1a73e8;
+
+    .button-row a {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 999px;
       text-decoration: none;
+      color: white;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.2s ease, background 0.2s ease;
     }
-    a:hover {
-      text-decoration: underline;
+
+    .button-row a:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .section-card {
+      padding: 24px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.15rem;
+    }
+
+    p, li {
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.75;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 640px) {
+      .hero-card,
+      .section-card {
+        padding: 22px;
+      }
+
+      .container {
+        padding-top: 40px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Xiaoyu Sun</h1>
-  <p class="subtitle">Student, researcher, and aspiring data scientist in health and biomedicine</p>
+  <canvas id="bg"></canvas>
+  <div class="bg-overlay"></div>
 
-  <h2>About</h2>
-  <p>
-    I am interested in computational neuroscience, biomedical data science,
-    and machine learning for health. I am currently building research and
-    technical experience at the intersection of computing, medicine, and data.
-  </p>
+  <main class="container">
+    <section class="hero-card">
+      <p class="name-sub">霄宇 • Sky and Universe</p>
+      <h1 class="name">Xiaoyu Sun</h1>
+      <p class="tagline">
+        I am interested in computational neuroscience, biomedical data science,
+        and machine learning for health. I wanted this site to reflect my name,
+        with drifting clouds and a quiet universe in motion.
+      </p>
 
-  <h2>Projects</h2>
-  <ul>
-    <li>Retinal OCT fluid segmentation and quantification</li>
-    <li>EEG analysis using neural networks and signal processing</li>
-    <li>Health data science and biomedical informatics projects</li>
-  </ul>
+      <div class="button-row">
+        <a href="https://github.com/XiaoyuSun-1" target="_blank">GitHub</a>
+        <a href="#">CV</a>
+        <a href="#">LinkedIn</a>
+        <a href="mailto:your-email@example.com">Contact</a>
+      </div>
+    </section>
 
-  <h2>Links</h2>
-  <ul>
-    <li><a href="https://github.com/XiaoyuSun-1">GitHub</a></li>
-    <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
-    <li><a href="#">CV</a></li>
-  </ul>
+    <section class="grid">
+      <article class="section-card">
+        <h2>About</h2>
+        <p>
+          I am a student and researcher working across computing, medicine,
+          and data. My interests include computational neuroscience,
+          biomedical informatics, and health-focused machine learning.
+        </p>
+      </article>
 
-  <h2>Contact</h2>
-  <p>Email: your-email@example.com</p>
+      <article class="section-card">
+        <h2>Projects</h2>
+        <ul>
+          <li>Retinal OCT fluid segmentation and quantification</li>
+          <li>EEG analysis with neural networks and signal processing</li>
+          <li>Health data science and biomedical informatics research</li>
+        </ul>
+      </article>
+
+      <article class="section-card">
+        <h2>Theme</h2>
+        <p>
+          This background is built as a live animated sky with stars and nebula-like
+          clouds, so the page feels calm, spacious, and a little cosmic.
+        </p>
+      </article>
+    </section>
+
+    <div class="footer">
+      Built with GitHub Pages
+    </div>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      createStars();
+      createNebulas();
+    }
+
+    const starCount = 180;
+    let stars = [];
+    let nebulas = [];
+    let shootingStar = null;
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createStars() {
+      stars = Array.from({ length: starCount }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: rand(0.4, 1.8),
+        alpha: rand(0.35, 0.95),
+        twinkle: rand(0.5, 2.2),
+        drift: rand(0.003, 0.015)
+      }));
+    }
+
+    function createNebulaSprite(size, hueA, hueB) {
+      const off = document.createElement("canvas");
+      off.width = size;
+      off.height = size;
+      const octx = off.getContext("2d");
+
+      for (let i = 0; i < 7; i++) {
+        const x = rand(size * 0.18, size * 0.82);
+        const y = rand(size * 0.18, size * 0.82);
+        const r = rand(size * 0.16, size * 0.34);
+        const hue = Math.random() < 0.5 ? hueA : hueB;
+        const grad = octx.createRadialGradient(x, y, 0, x, y, r);
+        grad.addColorStop(0, `hsla(${hue}, 80%, 72%, 0.14)`);
+        grad.addColorStop(0.4, `hsla(${hue}, 85%, 66%, 0.08)`);
+        grad.addColorStop(1, `hsla(${hue}, 90%, 60%, 0)`);
+        octx.fillStyle = grad;
+        octx.beginPath();
+        octx.arc(x, y, r, 0, Math.PI * 2);
+        octx.fill();
+      }
+
+      return off;
+    }
+
+    function createNebulas() {
+      const palette = [
+        [210, 260],
+        [220, 285],
+        [200, 245],
+        [190, 270]
+      ];
+
+      nebulas = Array.from({ length: 6 }, (_, i) => {
+        const size = rand(280, 520);
+        const hues = palette[i % palette.length];
+        return {
+          sprite: createNebulaSprite(size, hues[0], hues[1]),
+          x: rand(-80, width),
+          y: rand(-60, height * 0.85),
+          w: size,
+          h: size,
+          vx: rand(-0.04, 0.04),
+          vy: rand(-0.015, 0.015),
+          alpha: rand(0.35, 0.65),
+          rotation: rand(0, Math.PI * 2),
+          vr: rand(-0.0007, 0.0007)
+        };
+      });
+    }
+
+    function drawBackgroundGradient() {
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, "#040816");
+      grad.addColorStop(0.45, "#071126");
+      grad.addColorStop(1, "#02040f");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawStars(t) {
+      for (const s of stars) {
+        const tw = 0.65 + Math.sin(t * 0.0012 * s.twinkle + s.x * 0.01) * 0.35;
+        const a = Math.max(0.08, s.alpha * tw);
+
+        s.y -= s.drift;
+        if (s.y < -2) {
+          s.y = height + 2;
+          s.x = Math.random() * width;
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawNebulas() {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      for (const n of nebulas) {
+        n.x += n.vx;
+        n.y += n.vy;
+        n.rotation += n.vr;
+
+        if (n.x > width + 140) n.x = -n.w * 0.8;
+        if (n.x < -n.w) n.x = width + 100;
+        if (n.y > height + 120) n.y = -n.h * 0.6;
+        if (n.y < -n.h) n.y = height + 60;
+
+        ctx.save();
+        ctx.translate(n.x + n.w / 2, n.y + n.h / 2);
+        ctx.rotate(n.rotation);
+        ctx.globalAlpha = n.alpha;
+        ctx.drawImage(n.sprite, -n.w / 2, -n.h / 2, n.w, n.h);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    function maybeCreateShootingStar() {
+      if (!shootingStar && Math.random() < 0.0025) {
+        shootingStar = {
+          x: rand(width * 0.15, width * 0.85),
+          y: rand(0, height * 0.35),
+          vx: rand(-7, -4),
+          vy: rand(2.2, 4),
+          life: 0,
+          maxLife: rand(28, 42)
+        };
+      }
+    }
+
+    function drawShootingStar() {
+      if (!shootingStar) return;
+
+      const s = shootingStar;
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life++;
+
+      const tailLength = 140;
+      const grad = ctx.createLinearGradient(s.x, s.y, s.x - tailLength, s.y - tailLength * 0.35);
+      grad.addColorStop(0, "rgba(255,255,255,0.95)");
+      grad.addColorStop(0.3, "rgba(180,220,255,0.5)");
+      grad.addColorStop(1, "rgba(180,220,255,0)");
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - tailLength, s.y - tailLength * 0.35);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      ctx.arc(s.x, s.y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (s.life > s.maxLife) {
+        shootingStar = null;
+      }
+    }
+
+    function animate(t = 0) {
+      drawBackgroundGradient();
+      drawNebulas();
+      drawStars(t);
+      maybeCreateShootingStar();
+      drawShootingStar();
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    animate();
+  </script>
 </body>
 </html>
