@@ -5,105 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Xiaoyu Sun</title>
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    :root {
+      --page-max: 980px;
+      --glass: rgba(10, 18, 40, 0.34);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --text: rgba(255, 255, 255, 0.95);
+      --muted: rgba(255, 255, 255, 0.78);
+      --button: rgba(255, 255, 255, 0.10);
+      --button-hover: rgba(255, 255, 255, 0.18);
     }
 
     html, body {
       margin: 0;
-      padding: 0;
       min-height: 100%;
-      font-family: "Inter", "Segoe UI", Arial, sans-serif;
-      color: white;
-      background: #050816;
       overflow-x: hidden;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: #020617;
     }
 
-    #bg {
+    body {
+      position: relative;
+    }
+
+    #sky {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
-      z-index: -2;
       display: block;
+      z-index: -3;
     }
 
-    .bg-overlay {
+    .overlay {
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: -2;
       background:
-        radial-gradient(circle at top, rgba(120, 160, 255, 0.10), transparent 35%),
-        radial-gradient(circle at 80% 20%, rgba(180, 120, 255, 0.10), transparent 30%),
-        linear-gradient(to bottom, rgba(4, 8, 24, 0.15), rgba(3, 5, 18, 0.45));
+        radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.08), transparent 30%),
+        linear-gradient(to bottom, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.36));
       pointer-events: none;
     }
 
-    .container {
-      width: min(920px, calc(100% - 32px));
+    .page {
+      width: min(var(--page-max), calc(100% - 32px));
       margin: 0 auto;
-      padding: 72px 0 56px;
+      padding: 60px 0 40px;
+      position: relative;
+      z-index: 2;
     }
 
-    .hero-card,
-    .section-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 24px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    .hero, .card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 28px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.22);
     }
 
-    .hero-card {
-      padding: 40px 32px;
-      margin-bottom: 24px;
+    .hero {
+      padding: 36px 34px;
+      margin-bottom: 18px;
     }
 
-    .name {
-      font-size: clamp(2.4rem, 7vw, 4.8rem);
-      line-height: 1.02;
-      margin: 0;
-      letter-spacing: -0.03em;
-    }
-
-    .name-sub {
-      margin-top: 10px;
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--muted);
       font-size: 1rem;
-      color: rgba(255, 255, 255, 0.82);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .tagline {
-      margin-top: 20px;
-      font-size: 1.12rem;
-      line-height: 1.7;
-      max-width: 700px;
-      color: rgba(255, 255, 255, 0.9);
+    h1 {
+      margin: 0;
+      font-size: clamp(3rem, 9vw, 5.25rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
     }
 
-    .button-row {
+    .tagline {
+      max-width: 720px;
+      font-size: 1.14rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin: 22px 0 0;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 24px;
     }
 
-    .button-row a {
-      display: inline-block;
-      padding: 12px 18px;
+    .buttons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
       border-radius: 999px;
       text-decoration: none;
       color: white;
-      background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      transition: transform 0.2s ease, background 0.2s ease;
+      background: var(--button);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     }
 
-    .button-row a:hover {
+    .buttons a:hover {
       transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.16);
+      background: var(--button-hover);
+      border-color: rgba(255, 255, 255, 0.24);
     }
 
     .grid {
@@ -113,298 +134,561 @@
       margin-top: 18px;
     }
 
-    .section-card {
+    .card {
       padding: 24px;
     }
 
     h2 {
       margin: 0 0 14px;
-      font-size: 1.15rem;
+      font-size: 1.22rem;
     }
 
     p, li {
-      color: rgba(255, 255, 255, 0.88);
+      color: var(--muted);
       line-height: 1.75;
+      font-size: 1rem;
     }
 
     ul {
       margin: 0;
-      padding-left: 18px;
+      padding-left: 20px;
     }
 
     .footer {
-      margin-top: 28px;
+      margin-top: 24px;
       text-align: center;
-      color: rgba(255, 255, 255, 0.68);
       font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.68);
+    }
+
+    .footer a {
+      color: rgba(255, 255, 255, 0.86);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 640px) {
-      .hero-card,
-      .section-card {
-        padding: 22px;
+      .page {
+        padding-top: 32px;
       }
 
-      .container {
-        padding-top: 40px;
+      .hero, .card {
+        padding: 22px;
+        border-radius: 24px;
+      }
+
+      .tagline {
+        font-size: 1.03rem;
       }
     }
   </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <div class="bg-overlay"></div>
+  <canvas id="sky"></canvas>
+  <div class="overlay"></div>
 
-  <main class="container">
-    <section class="hero-card">
-      <p class="name-sub">霄宇 • Sky and Universe</p>
-      <h1 class="name">Xiaoyu Sun</h1>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">霄宇 • Sky and Universe</p>
+      <h1>Xiaoyu Sun</h1>
       <p class="tagline">
-        I am interested in computational neuroscience, biomedical data science,
-        and machine learning for health. I wanted this site to reflect my name,
-        with drifting clouds and a quiet universe in motion.
+        I am interested in computational neuroscience, biomedical data science, and machine learning for health.
+        I wanted this site to reflect my name, with a sky that changes in real time, clouds across the lower horizon,
+        and the sun, moon, and stars shifting with time.
       </p>
+      <p class="status" id="sky-status">Using your device clock. Waiting for location permission for a truer solar path.</p>
 
-      <div class="button-row">
-        <a href="https://github.com/XiaoyuSun-1" target="_blank">GitHub</a>
-        <a href="#">CV</a>
-        <a href="https://www.linkedin.com/in/klay-xiaoyu-sun/">LinkedIn</a>
+      <div class="buttons">
+        <a href="https://github.com/XiaoyuSun-1" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="cv.pdf" target="_blank" rel="noopener noreferrer">CV</a>
+        <a href="https://www.linkedin.com/in/klay-xiaoyu-sun/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="mailto:xisun@students.pitzer.edu">Contact</a>
       </div>
     </section>
 
     <section class="grid">
-      <article class="section-card">
+      <article class="card">
         <h2>About</h2>
         <p>
-          I am a student and researcher working across computing, medicine,
-          and data. My interests include computational neuroscience,
-          biomedical informatics, and health-focused machine learning.
+          I am a student and researcher working across computing, medicine, and data.
+          My interests include computational neuroscience, biomedical informatics,
+          and health-focused machine learning.
         </p>
       </article>
 
-      <article class="section-card">
+      <article class="card">
         <h2>Projects</h2>
         <ul>
           <li>Retinal OCT fluid segmentation and quantification</li>
-          <li>EEG analysis with neural networks and signal processing</li>
-          <li>Health data science and biomedical informatics research</li>
+          <li>EEG motor-imagery decoding with complex-valued methods</li>
+          <li>Clinical GUI design for femtosecond laser planning</li>
         </ul>
       </article>
 
-      <article class="section-card">
+      <article class="card">
         <h2>Theme</h2>
         <p>
-          This background is built as a live animated sky with stars and nebula-like
-          clouds, so the page feels calm, spacious, and a little cosmic.
+          The background changes through day, dusk, night, and dawn.
+          It uses your local device time, and if you allow location access,
+          the sun arc becomes more faithful to where you are.
         </p>
       </article>
     </section>
 
     <div class="footer">
-      Built with GitHub Pages
+      Built with GitHub Pages. Put a file named <a href="cv.pdf">cv.pdf</a> in your repo root for the CV button.
     </div>
   </main>
 
   <script>
-    const canvas = document.getElementById("bg");
+    const canvas = document.getElementById("sky");
     const ctx = canvas.getContext("2d");
+    const statusEl = document.getElementById("sky-status");
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    const observer = {
+      lat: null,
+      lon: null,
+      usingGeo: false
+    };
+
+    const stars = [];
+    const cloudLayers = [];
+    const STAR_COUNT = 220;
+    const HORIZON_RATIO = 0.62;
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function smoothstep(edge0, edge1, x) {
+      const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    function rgba(r, g, b, a = 1) {
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
 
     function resize() {
       width = window.innerWidth;
       height = window.innerHeight;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
+
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      createStars();
-      createNebulas();
+
+      buildStars();
+      buildClouds();
     }
 
-    const starCount = 180;
-    let stars = [];
-    let nebulas = [];
-    let shootingStar = null;
-
-    function rand(min, max) {
+    function random(min, max) {
       return Math.random() * (max - min) + min;
     }
 
-    function createStars() {
-      stars = Array.from({ length: starCount }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: rand(0.4, 1.8),
-        alpha: rand(0.35, 0.95),
-        twinkle: rand(0.5, 2.2),
-        drift: rand(0.003, 0.015)
-      }));
-    }
-
-    function createNebulaSprite(size, hueA, hueB) {
-      const off = document.createElement("canvas");
-      off.width = size;
-      off.height = size;
-      const octx = off.getContext("2d");
-
-      for (let i = 0; i < 7; i++) {
-        const x = rand(size * 0.18, size * 0.82);
-        const y = rand(size * 0.18, size * 0.82);
-        const r = rand(size * 0.16, size * 0.34);
-        const hue = Math.random() < 0.5 ? hueA : hueB;
-        const grad = octx.createRadialGradient(x, y, 0, x, y, r);
-        grad.addColorStop(0, `hsla(${hue}, 80%, 72%, 0.14)`);
-        grad.addColorStop(0.4, `hsla(${hue}, 85%, 66%, 0.08)`);
-        grad.addColorStop(1, `hsla(${hue}, 90%, 60%, 0)`);
-        octx.fillStyle = grad;
-        octx.beginPath();
-        octx.arc(x, y, r, 0, Math.PI * 2);
-        octx.fill();
+    function buildStars() {
+      stars.length = 0;
+      for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height * 0.72,
+          r: random(0.45, 1.75),
+          baseAlpha: random(0.25, 0.95),
+          twinkle: random(0.6, 2.4),
+          driftX: random(-0.008, 0.008),
+          driftY: random(-0.018, 0.018)
+        });
       }
-
-      return off;
     }
 
-    function createNebulas() {
-      const palette = [
-        [210, 260],
-        [220, 285],
-        [200, 245],
-        [190, 270]
-      ];
-
-      nebulas = Array.from({ length: 6 }, (_, i) => {
-        const size = rand(280, 520);
-        const hues = palette[i % palette.length];
-        return {
-          sprite: createNebulaSprite(size, hues[0], hues[1]),
-          x: rand(-80, width),
-          y: rand(-60, height * 0.85),
-          w: size,
-          h: size,
-          vx: rand(-0.04, 0.04),
-          vy: rand(-0.015, 0.015),
-          alpha: rand(0.35, 0.65),
-          rotation: rand(0, Math.PI * 2),
-          vr: rand(-0.0007, 0.0007)
-        };
-      });
+    function createCloud(count, baseYRatio, sizeMin, sizeMax, speedMin, speedMax, alpha) {
+      const clouds = [];
+      for (let i = 0; i < count; i++) {
+        clouds.push({
+          x: random(-200, width + 200),
+          y: height * baseYRatio + random(-30, 40),
+          size: random(sizeMin, sizeMax),
+          speed: random(speedMin, speedMax),
+          alpha,
+          puffOffset: Array.from({ length: 5 }, () => ({
+            ox: random(-0.42, 0.42),
+            oy: random(-0.18, 0.18),
+            scale: random(0.55, 1.1)
+          }))
+        });
+      }
+      return clouds;
     }
 
-    function drawBackgroundGradient() {
-      const grad = ctx.createLinearGradient(0, 0, 0, height);
-      grad.addColorStop(0, "#040816");
-      grad.addColorStop(0.45, "#071126");
-      grad.addColorStop(1, "#02040f");
-      ctx.fillStyle = grad;
+    function buildClouds() {
+      cloudLayers.length = 0;
+      cloudLayers.push(createCloud(10, 0.66, 130, 220, 0.03, 0.09, 0.16));
+      cloudLayers.push(createCloud(9, 0.76, 160, 280, 0.06, 0.14, 0.22));
+      cloudLayers.push(createCloud(8, 0.88, 220, 360, 0.09, 0.18, 0.28));
+    }
+
+    function dayOfYear(date) {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = date - start;
+      return Math.floor(diff / 86400000);
+    }
+
+    function solarPosition(date, lat, lon) {
+      const rad = Math.PI / 180;
+      const n = dayOfYear(date);
+      const hours = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+      const gamma = 2 * Math.PI / 365 * (n - 1 + (hours - 12) / 24);
+
+      const eqtime = 229.18 * (
+        0.000075 +
+        0.001868 * Math.cos(gamma) -
+        0.032077 * Math.sin(gamma) -
+        0.014615 * Math.cos(2 * gamma) -
+        0.040849 * Math.sin(2 * gamma)
+      );
+
+      const decl =
+        0.006918 -
+        0.399912 * Math.cos(gamma) +
+        0.070257 * Math.sin(gamma) -
+        0.006758 * Math.cos(2 * gamma) +
+        0.000907 * Math.sin(2 * gamma) -
+        0.002697 * Math.cos(3 * gamma) +
+        0.00148 * Math.sin(3 * gamma);
+
+      const timezone = -date.getTimezoneOffset() / 60;
+      const timeOffset = eqtime + 4 * lon - 60 * timezone;
+      const trueSolarMinutes = hours * 60 + timeOffset;
+      const hourAngleDeg = trueSolarMinutes / 4 - 180;
+      const hourAngle = hourAngleDeg * rad;
+      const latRad = lat * rad;
+
+      const cosZenith =
+        Math.sin(latRad) * Math.sin(decl) +
+        Math.cos(latRad) * Math.cos(decl) * Math.cos(hourAngle);
+
+      const zenith = Math.acos(clamp(cosZenith, -1, 1));
+      const altitude = 90 - zenith / rad;
+
+      return {
+        altitude,
+        hourAngleDeg
+      };
+    }
+
+    function fallbackSolarPosition(date) {
+      const h = date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+      const t = (h - 6) / 12;
+      const altitude = Math.sin(t * Math.PI) * 72 - 8;
+      const hourAngleDeg = (h / 24) * 360 - 180;
+      return { altitude, hourAngleDeg };
+    }
+
+    function getSun(date) {
+      if (observer.usingGeo && observer.lat != null && observer.lon != null) {
+        return solarPosition(date, observer.lat, observer.lon);
+      }
+      return fallbackSolarPosition(date);
+    }
+
+    function moonPhase(date) {
+      const synodicMonth = 29.530588853;
+      const knownNewMoon = Date.UTC(2000, 0, 6, 18, 14, 0);
+      const days = (date.getTime() - knownNewMoon) / 86400000;
+      let phase = (days / synodicMonth) % 1;
+      if (phase < 0) phase += 1;
+      return phase;
+    }
+
+    function getMoon(date) {
+      const phase = moonPhase(date);
+      const shifted = new Date(date.getTime() + (12.85 + phase * 1.2) * 3600000);
+      const pos = observer.usingGeo && observer.lat != null && observer.lon != null
+        ? solarPosition(shifted, observer.lat, observer.lon)
+        : fallbackSolarPosition(shifted);
+      return {
+        altitude: pos.altitude,
+        hourAngleDeg: pos.hourAngleDeg,
+        phase
+      };
+    }
+
+    function bodyToXY(pos) {
+      const horizonY = height * HORIZON_RATIO;
+      const x = width * (0.5 + clamp(pos.hourAngleDeg, -110, 110) / 220 * 0.84);
+      const altitudeNorm = clamp((pos.altitude + 12) / 84, 0, 1);
+      const y = horizonY - altitudeNorm * height * 0.48;
+      return { x, y };
+    }
+
+    function drawSky(sunAlt) {
+      const horizonY = height * HORIZON_RATIO;
+      const day = smoothstep(-6, 18, sunAlt);
+      const night = 1 - smoothstep(-10, 6, sunAlt);
+      const twilight = Math.max(0, 1 - Math.abs(sunAlt) / 16);
+
+      const base = ctx.createLinearGradient(0, 0, 0, height);
+      base.addColorStop(0, rgba(2, 8, 28, 1));
+      base.addColorStop(0.55, rgba(7, 16, 46, 1));
+      base.addColorStop(1, rgba(10, 14, 32, 1));
+      ctx.fillStyle = base;
       ctx.fillRect(0, 0, width, height);
-    }
 
-    function drawStars(t) {
-      for (const s of stars) {
-        const tw = 0.65 + Math.sin(t * 0.0012 * s.twinkle + s.x * 0.01) * 0.35;
-        const a = Math.max(0.08, s.alpha * tw);
+      if (day > 0) {
+        ctx.save();
+        ctx.globalAlpha = day;
+        const dayGrad = ctx.createLinearGradient(0, 0, 0, height);
+        dayGrad.addColorStop(0, rgba(88, 163, 255, 1));
+        dayGrad.addColorStop(0.52, rgba(156, 209, 255, 1));
+        dayGrad.addColorStop(1, rgba(216, 236, 255, 1));
+        ctx.fillStyle = dayGrad;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
 
-        s.y -= s.drift;
-        if (s.y < -2) {
-          s.y = height + 2;
-          s.x = Math.random() * width;
-        }
+      if (twilight > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = twilight * 0.95;
+        const dusk = ctx.createRadialGradient(width * 0.5, horizonY - 10, 10, width * 0.5, horizonY - 10, width * 0.62);
+        dusk.addColorStop(0, rgba(255, 206, 122, 0.88));
+        dusk.addColorStop(0.32, rgba(255, 145, 92, 0.42));
+        dusk.addColorStop(0.62, rgba(153, 106, 215, 0.18));
+        dusk.addColorStop(1, rgba(0, 0, 0, 0));
+        ctx.fillStyle = dusk;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
 
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${a})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
+      if (night > 0.1) {
+        ctx.save();
+        ctx.globalAlpha = night * 0.55;
+        const glowA = ctx.createRadialGradient(width * 0.18, height * 0.18, 0, width * 0.18, height * 0.18, width * 0.34);
+        glowA.addColorStop(0, rgba(72, 92, 180, 0.30));
+        glowA.addColorStop(1, rgba(72, 92, 180, 0));
+        ctx.fillStyle = glowA;
+        ctx.fillRect(0, 0, width, height);
+
+        const glowB = ctx.createRadialGradient(width * 0.82, height * 0.14, 0, width * 0.82, height * 0.14, width * 0.28);
+        glowB.addColorStop(0, rgba(120, 88, 180, 0.22));
+        glowB.addColorStop(1, rgba(120, 88, 180, 0));
+        ctx.fillStyle = glowB;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
       }
     }
 
-    function drawNebulas() {
+    function drawStars(t, sunAlt) {
+      const night = 1 - smoothstep(-8, 8, sunAlt);
+      if (night < 0.06) return;
+
       ctx.save();
       ctx.globalCompositeOperation = "screen";
 
-      for (const n of nebulas) {
-        n.x += n.vx;
-        n.y += n.vy;
-        n.rotation += n.vr;
+      for (const star of stars) {
+        star.x += star.driftX;
+        star.y += star.driftY;
 
-        if (n.x > width + 140) n.x = -n.w * 0.8;
-        if (n.x < -n.w) n.x = width + 100;
-        if (n.y > height + 120) n.y = -n.h * 0.6;
-        if (n.y < -n.h) n.y = height + 60;
+        if (star.x < -2) star.x = width + 2;
+        if (star.x > width + 2) star.x = -2;
+        if (star.y < -2) star.y = height * 0.72 + 2;
+        if (star.y > height * 0.72 + 2) star.y = -2;
 
-        ctx.save();
-        ctx.translate(n.x + n.w / 2, n.y + n.h / 2);
-        ctx.rotate(n.rotation);
-        ctx.globalAlpha = n.alpha;
-        ctx.drawImage(n.sprite, -n.w / 2, -n.h / 2, n.w, n.h);
-        ctx.restore();
+        const twinkle = 0.55 + 0.45 * Math.sin(t * 0.0012 * star.twinkle + star.x * 0.012 + star.y * 0.008);
+        const alpha = clamp(star.baseAlpha * twinkle * night, 0, 1);
+        ctx.beginPath();
+        ctx.fillStyle = rgba(255, 255, 255, alpha);
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       ctx.restore();
     }
 
-    function maybeCreateShootingStar() {
-      if (!shootingStar && Math.random() < 0.0025) {
-        shootingStar = {
-          x: rand(width * 0.15, width * 0.85),
-          y: rand(0, height * 0.35),
-          vx: rand(-7, -4),
-          vy: rand(2.2, 4),
-          life: 0,
-          maxLife: rand(28, 42)
-        };
-      }
-    }
+    function drawSun(pos, sunAlt) {
+      if (sunAlt < -8) return;
+      const { x, y } = bodyToXY(pos);
+      const r = lerp(24, 38, smoothstep(-6, 30, sunAlt));
 
-    function drawShootingStar() {
-      if (!shootingStar) return;
-
-      const s = shootingStar;
-      s.x += s.vx;
-      s.y += s.vy;
-      s.life++;
-
-      const tailLength = 140;
-      const grad = ctx.createLinearGradient(s.x, s.y, s.x - tailLength, s.y - tailLength * 0.35);
-      grad.addColorStop(0, "rgba(255,255,255,0.95)");
-      grad.addColorStop(0.3, "rgba(180,220,255,0.5)");
-      grad.addColorStop(1, "rgba(180,220,255,0)");
-
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2;
+      ctx.save();
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.3);
+      glow.addColorStop(0, rgba(255, 248, 220, 0.92));
+      glow.addColorStop(0.18, rgba(255, 220, 140, 0.52));
+      glow.addColorStop(0.5, rgba(255, 180, 90, 0.18));
+      glow.addColorStop(1, rgba(255, 180, 90, 0));
+      ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.moveTo(s.x, s.y);
-      ctx.lineTo(s.x - tailLength, s.y - tailLength * 0.35);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(255,255,255,0.95)";
-      ctx.arc(s.x, s.y, 1.8, 0, Math.PI * 2);
+      ctx.arc(x, y, r * 3.3, 0, Math.PI * 2);
       ctx.fill();
 
-      if (s.life > s.maxLife) {
-        shootingStar = null;
+      ctx.beginPath();
+      ctx.fillStyle = rgba(255, 236, 176, 0.98);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawMoon(pos, sunAlt) {
+      const night = 1 - smoothstep(-6, 8, sunAlt);
+      if (night < 0.16) return;
+
+      const { x, y } = bodyToXY(pos);
+      const r = 22;
+      const phase = pos.phase;
+      const illum = 0.5 * (1 - Math.cos(2 * Math.PI * phase));
+      const waxing = phase < 0.5;
+      const shadowShift = (1 - illum) * r * 2 * (waxing ? -1 : 1);
+
+      ctx.save();
+      const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+      glow.addColorStop(0, rgba(255, 255, 255, 0.30 * night));
+      glow.addColorStop(1, rgba(255, 255, 255, 0));
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 3.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.fillStyle = rgba(242, 245, 250, 0.95 * night);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.beginPath();
+      ctx.fillStyle = rgba(10, 18, 40, 0.92);
+      ctx.arc(x + shadowShift, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawCloudBand() {
+      const horizonY = height * HORIZON_RATIO;
+      const grad = ctx.createLinearGradient(0, horizonY - 30, 0, height);
+      grad.addColorStop(0, rgba(255, 255, 255, 0.04));
+      grad.addColorStop(0.25, rgba(180, 195, 230, 0.08));
+      grad.addColorStop(1, rgba(10, 16, 34, 0.62));
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, horizonY - 30, width, height - horizonY + 30);
+    }
+
+    function drawCloudPuff(cloud, layerIndex, sunAlt) {
+      const night = 1 - smoothstep(-8, 10, sunAlt);
+      const daylight = smoothstep(-8, 18, sunAlt);
+      const lightA = rgba(255, 250, 245, cloud.alpha * (0.18 + daylight * 0.42));
+      const lightB = rgba(130, 150, 195, cloud.alpha * (0.18 + night * 0.38));
+      const fillA = daylight > 0.35 ? lightA : lightB;
+      const fillB = daylight > 0.35
+        ? rgba(255, 208, 168, cloud.alpha * 0.18)
+        : rgba(56, 78, 128, cloud.alpha * 0.24);
+
+      const grad = ctx.createLinearGradient(cloud.x, cloud.y - cloud.size * 0.4, cloud.x, cloud.y + cloud.size * 0.4);
+      grad.addColorStop(0, fillA);
+      grad.addColorStop(1, fillB);
+      ctx.fillStyle = grad;
+
+      for (const puff of cloud.puffOffset) {
+        const rx = cloud.size * puff.scale * 0.70;
+        const ry = cloud.size * puff.scale * 0.36;
+        ctx.beginPath();
+        ctx.ellipse(
+          cloud.x + puff.ox * cloud.size,
+          cloud.y + puff.oy * cloud.size + layerIndex * 6,
+          rx,
+          ry,
+          0,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
       }
     }
 
-    function animate(t = 0) {
-      drawBackgroundGradient();
-      drawNebulas();
-      drawStars(t);
-      maybeCreateShootingStar();
-      drawShootingStar();
-      requestAnimationFrame(animate);
+    function drawClouds(sunAlt) {
+      drawCloudBand();
+
+      cloudLayers.forEach((layer, layerIndex) => {
+        for (const cloud of layer) {
+          cloud.x += cloud.speed;
+          if (cloud.x - cloud.size * 1.2 > width + 260) {
+            cloud.x = -cloud.size * 1.4 - 160;
+          }
+          drawCloudPuff(cloud, layerIndex, sunAlt);
+        }
+      });
+    }
+
+    function drawHaze(sunAlt, sunPos) {
+      const { x, y } = bodyToXY(sunPos);
+      const haze = Math.max(0, 1 - Math.abs(sunAlt) / 18);
+      if (haze < 0.08) return;
+
+      ctx.save();
+      ctx.globalAlpha = haze * 0.42;
+      const halo = ctx.createRadialGradient(x, y, 0, x, y, width * 0.32);
+      halo.addColorStop(0, rgba(255, 210, 140, 0.28));
+      halo.addColorStop(1, rgba(255, 210, 140, 0));
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    function render(t) {
+      const now = new Date();
+      const sun = getSun(now);
+      const moon = getMoon(now);
+
+      drawSky(sun.altitude);
+      drawStars(t, sun.altitude);
+      drawHaze(sun.altitude, sun);
+      drawSun(sun, sun.altitude);
+      drawMoon(moon, sun.altitude);
+      drawClouds(sun.altitude);
+
+      requestAnimationFrame(render);
+    }
+
+    function requestLocation() {
+      if (!navigator.geolocation) {
+        statusEl.textContent = "Using your device clock only. Browser location is unavailable.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          observer.lat = pos.coords.latitude;
+          observer.lon = pos.coords.longitude;
+          observer.usingGeo = true;
+          statusEl.textContent = "Using your live location and device time for the sky.";
+        },
+        () => {
+          observer.usingGeo = false;
+          statusEl.textContent = "Using your device clock only. Allow location access if you want a truer solar path.";
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 10 * 60 * 1000,
+          timeout: 5000
+        }
+      );
     }
 
     window.addEventListener("resize", resize);
     resize();
-    animate();
+    requestLocation();
+    requestAnimationFrame(render);
   </script>
 </body>
 </html>
