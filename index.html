@@ -9,7 +9,7 @@
 
     :root {
       --page-max: 980px;
-      --glass: rgba(10, 18, 40, 0.34);
+      --glass: rgba(10, 18, 40, 0.22);
       --glass-border: rgba(255, 255, 255, 0.16);
       --text: rgba(255, 255, 255, 0.95);
       --muted: rgba(255, 255, 255, 0.78);
@@ -36,20 +36,21 @@
       width: 100%;
       height: 100%;
       display: block;
-      z-index: -3;
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background:
-        radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.08), transparent 30%),
-        linear-gradient(to bottom, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.36));
+      z-index: 0;
       pointer-events: none;
     }
 
-    .page {
+        .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.04), transparent 30%),
+        linear-gradient(to bottom, rgba(2, 6, 23, 0.03), rgba(2, 6, 23, 0.16));
+      pointer-events: none;
+    }
+
+        .page {
       width: min(var(--page-max), calc(100% - 32px));
       margin: 0 auto;
       padding: 60px 0 40px;
@@ -260,7 +261,7 @@
 
     const stars = [];
     const cloudLayers = [];
-    const STAR_COUNT = 220;
+    const STAR_COUNT = 320;
     const HORIZON_RATIO = 0.62;
 
     function clamp(v, min, max) {
@@ -335,9 +336,9 @@
 
     function buildClouds() {
       cloudLayers.length = 0;
-      cloudLayers.push(createCloud(10, 0.66, 130, 220, 0.03, 0.09, 0.16));
-      cloudLayers.push(createCloud(9, 0.76, 160, 280, 0.06, 0.14, 0.22));
-      cloudLayers.push(createCloud(8, 0.88, 220, 360, 0.09, 0.18, 0.28));
+      cloudLayers.push(createCloud(11, 0.64, 140, 240, 0.05, 0.12, 0.26));
+      cloudLayers.push(createCloud(10, 0.75, 180, 300, 0.09, 0.18, 0.34));
+      cloudLayers.push(createCloud(9, 0.87, 240, 390, 0.14, 0.24, 0.42));
     }
 
     function dayOfYear(date) {
@@ -507,7 +508,7 @@
         if (star.y > height * 0.72 + 2) star.y = -2;
 
         const twinkle = 0.55 + 0.45 * Math.sin(t * 0.0012 * star.twinkle + star.x * 0.012 + star.y * 0.008);
-        const alpha = clamp(star.baseAlpha * twinkle * night, 0, 1);
+        const alpha = clamp(star.baseAlpha * twinkle * night * 1.35, 0, 1);
         ctx.beginPath();
         ctx.fillStyle = rgba(255, 255, 255, alpha);
         ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
@@ -520,7 +521,7 @@
     function drawSun(pos, sunAlt) {
       if (sunAlt < -8) return;
       const { x, y } = bodyToXY(pos);
-      const r = lerp(24, 38, smoothstep(-6, 30, sunAlt));
+      const r = lerp(28, 44, smoothstep(-6, 30, sunAlt));
 
       ctx.save();
       const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 3.3);
@@ -545,7 +546,7 @@
       if (night < 0.16) return;
 
       const { x, y } = bodyToXY(pos);
-      const r = 22;
+      const r = 26;
       const phase = pos.phase;
       const illum = 0.5 * (1 - Math.cos(2 * Math.PI * phase));
       const waxing = phase < 0.5;
