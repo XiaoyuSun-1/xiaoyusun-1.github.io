@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xiaoyu Sun | Research</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="sky"></canvas>
+  <div class="overlay"></div>
+
+  <main class="page">
+    <nav class="nav">
+      <div class="nav-brand">霄宇 • Xiaoyu Sun</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a class="active" href="research.html">Research</a>
+        <a href="education.html">Education</a>
+        <a href="community.html">Community</a>
+        <a href="cv.html">CV</a>
+        <a href="mailto:xisun@students.pitzer.edu">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <p class="eyebrow">Research</p>
+      <h1 class="compact">Selected Research & Projects</h1>
+      <p class="lead">
+        My work sits at the intersection of machine learning, neuroscience, biomedical imaging, and clinical software.
+        I am especially interested in building technically strong methods that remain meaningful in real human and medical settings.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="grid-three">
+        <article class="card">
+          <h2>Retinal OCT Fluid Segmentation</h2>
+          <p>
+            At Washington University in St. Louis, I compared task-specific and foundation models for retinal OCT fluid
+            detection and segmentation on the RETOUCH challenge dataset. I also developed Python pipelines for preprocessing,
+            training, inference, and quantification.
+          </p>
+        </article>
+
+        <article class="card">
+          <h2>EEG Motor-Imagery Decoding</h2>
+          <p>
+            In computational neuroscience, I adapted TIMBRE for human EEG motor-imagery decoding and benchmarked rCSP,
+            cCSP, and TIMBRE on BCI Competition III Dataset IVa. This work explores the value of complex-valued methods
+            for neural decoding.
+          </p>
+        </article>
+
+        <article class="card">
+          <h2>Pupil Dynamics and Learning</h2>
+          <p>
+            I also analyze large-scale pupil data from the HEXXED puzzle game to study engagement, learning patterns,
+            and performance differences across players.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-header">Project Work</h2>
+      <div class="grid-two">
+        <article class="card">
+          <div class="entry">
+            <div class="entry-title">Project Femto</div>
+            <div class="entry-meta">Harvey Mudd College Clinics</div>
+            <p>
+              I designed a Qt touchscreen interface for femtosecond laser planning with synchronized parameter editing,
+              interactive geometry tools, clinician feedback loops, and export workflows for surgical planning.
+            </p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="entry">
+            <div class="entry-title">Computational Topology</div>
+            <div class="entry-meta">Claremont Graduate University</div>
+            <p>
+              I applied topological data analysis to epidemiological data, focusing on persistent homology,
+              classification, and prediction across infection phases and locations.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer">Research</div>
+  </main>
+
+  <script src="sky.js"></script>
+</body>
+</html>
